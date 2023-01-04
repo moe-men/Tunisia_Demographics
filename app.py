@@ -3,7 +3,6 @@ import requests
 import pandas as pd
 import numpy as np
 from streamlit_lottie import st_lottie
-import requests
 from bs4 import BeautifulSoup
 from utilis import get_city_coordinates, weather_icon
 
