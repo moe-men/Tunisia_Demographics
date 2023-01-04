@@ -3,27 +3,49 @@ import requests
 import pandas as pd
 import numpy as np
 from streamlit_lottie import st_lottie
+import requests
+from bs4 import BeautifulSoup
+from utilis import get_city_coordinates, weather_icon
 
-st.set_page_config(page_title="Tunisia infos", page_icon=":tn:", layout="wide")
 
+
+# --- SET PAGE CONFIG ---
+st.set_page_config(page_title="Discover Tunisia", page_icon="🇹🇳", layout="wide")
 def load_lottieurl(url):
     r = requests.get(url)
     if r.status_code != 200:
         print("ERROR")
         return None
     return r.json()
+flagURL = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_6adGImzoRn.json")
+
+
 
 # ------ HEADER SECTION ----
+col1, col2, col3 = st.columns([1,2,1])
+with col1 :
+    temperature, link_weather_icon = weather_icon()
+    st.markdown(f"![Alt Text]({link_weather_icon})")
+    col1.metric(label="Temperature" , value=temperature)
 
-st.subheader("Hi :wave:, here you will find infornation about Tunisia: Population, migration ...")
-st.warning("the data is from [Here >](https://databank.worldbank.org)")
+with col2 :
+    st.image("img_tn.jpg", use_column_width="always")
+
 
 
 # --- Tunisian flag ----
-flagURL = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_6adGImzoRn.json")
+with col3 :
+    st_lottie(flagURL, height=300, key="TNflag")
+
+
+with st.container():
+    st.write("---")
+    df = pd.read_csv("Population_Per_City.csv")
+    #df = get_city_coordinates()
+    st.map(df[['lat', 'lon']])
+
 
 # ------- Introdution Tunisia -----------
-
 with st.container():
     st.write("---")
     left_col, right_col = st.columns(2)
@@ -37,8 +59,8 @@ with st.container():
             - A great environmental diversity due to its north–south extent
             """
             )
-    with right_col:
-        st_lottie(flagURL, height=300, key="TNflag")
+    #with right_col:
+        #st_lottie(flagURL, height=300, key="TNflag")
 
 # ------ Ploting the Data Frame in use ----
 
