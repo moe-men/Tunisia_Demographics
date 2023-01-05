@@ -24,6 +24,8 @@ flagURL = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_6adGImz
 col1, col2, col3 = st.columns([1,2,1])
 with col1 :
     temperature, link_weather_icon = weather_icon()
+    if temperature.split("°")[-1] == "F" :
+        temperature = str(int((int(temperature.split("°")[0]) - 32 ) / 1.8 )) + "°C"
     st.markdown(f"![Alt Text]({link_weather_icon})")
     col1.metric(label="Temperature" , value=temperature)
 
