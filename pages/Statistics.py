@@ -8,73 +8,28 @@ from utilis import get_city_coordinates, weather_icon
 
 
 
-# --- SET PAGE CONFIG ---
-st.set_page_config(page_title="Discover Tunisia", page_icon="🇹🇳", layout="wide")
-def load_lottieurl(url):
-    r = requests.get(url)
-    if r.status_code != 200:
-        print("ERROR")
-        return None
-    return r.json()
-flagURL = load_lottieurl("https://assets10.lottiefiles.com/packages/lf20_6adGImzoRn.json")
-
-
-
-# ------ HEADER SECTION ----
-col1, col2, col3 = st.columns([1,2,1])
-with col1 :
-    temperature, link_weather_icon = weather_icon()
-    if temperature.split("°")[-1] == "F" :
-        temperature = str(int((int(temperature.split("°")[0]) - 32 ) / 1.8 )) + "°C"
-    st.markdown(f"![Alt Text]({link_weather_icon})")
-    col1.metric(label="Temperature" , value=temperature)
-
-with col2 :
-    st.image("img_tn.jpg", use_column_width="always")
-
-
-
-# --- Tunisian flag ----
-with col3 :
-    st_lottie(flagURL, height=300, key="TNflag")
-
-
-with st.container():
-    st.write("---")
-    df = pd.read_csv("Population_Per_City.csv")
-    #df = get_city_coordinates()
-    st.map(df[['lat', 'lon']])
-
-
-# ------- Introdution Tunisia -----------
-with st.container():
-    st.write("---")
-    left_col, right_col = st.columns(2)
-    with left_col:
-        st.header("Tunisia is :")
-        st.write("##")
-        st.write(
-            """
-            - Officially the Republic of Tunisia
-            - Situated on the Mediterranean
-            - A great environmental diversity due to its north–south extent
-            """
-            )
-    #with right_col:
-        #st_lottie(flagURL, height=300, key="TNflag")
-
-# ------ Ploting the Data Frame in use ----
-
-st.header("DataFrame Used")
-
+# --- FUNCTIONS ---
 df = pd.read_csv("data/data.csv")
 df.drop("Unnamed: 0", axis = 1, inplace=True)
+indicators = df.columns[1:]
+
+
+
+# --- SIDEBAR ---
+add_selectbox = st.sidebar.selectbox(
+    "How would you like to be contacted?",
+    list(indicators)
+)
+
+
+
+# ------ Ploting the Data Frame in use ----
+st.header("DataFrame Used")
 st.write(df)
 st.write("##")
 
 
 st.subheader("List of indicators :")
-indicators = df.columns[1:]
 indicators
 st.write("##")
 
@@ -147,4 +102,3 @@ st.write("##")
 st.subheader("Energy use (kg of oil equivalent per capita):")
 st.area_chart(data = df, x= "year", y= "Energy use (kg of oil equivalent per capita)")
 st.write("##")
-
