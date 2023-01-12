@@ -3,3 +3,6 @@ streamlit-lottie==0.0.3
 requests==2.25.1
 beautifulsoup4==4.11.1
 geopy==2.3.0
+plotly==5.11.0
+folium==0.14.0
+

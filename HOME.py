@@ -5,7 +5,10 @@ import numpy as np
 from streamlit_lottie import st_lottie
 from bs4 import BeautifulSoup
 from utilis import get_city_coordinates, weather_icon
-
+import plotly.graph_objs as go
+import folium
+import streamlit.components.v1 as components
+############# ADD flag counter https://s01.flagcounter.com/more/sKzp/
 
 
 # --- SET PAGE CONFIG ---
@@ -46,7 +49,7 @@ with col3 :
 # --- POPULATION COORDINATES ---
 with st.container():
     st.write("---")
-    df = pd.read_csv("Population_Per_City.csv")
+    df = pd.read_csv("data/Population_Per_City.csv")
     #df = get_city_coordinates()
     st.map(df[['lat', 'lon']])
 
@@ -67,6 +70,33 @@ with st.container():
             )
     with right_col:
         st.image("img/tn_boarder.png")
+
+
+
+
+df = pd.read_csv("data/Population_Per_City.csv")
+df.drop("Unnamed: 0", axis = 1, inplace=True)
+df.columns = ["city", "lat", "lon", "popu"]
+cities = []
+for index, rows in df.iterrows():
+    my_list =[rows.city, int(rows.popu.replace(',', '')), [rows.lat,rows.lon]]
+    cities.append(my_list)
+# Create a map object
+m = folium.Map(location=[33.8439408, 9.400138], zoom_start=8)
+
+# Add points to the map
+for city, population, coord in cities:
+    folium.CircleMarker(coord, radius=population/50000, fill_color="#3db7e4", fill_opacity=0.9).add_to(m)
+
+# SAVE the map
+m.save('img/map.html')
+
+# Display the map
+with open('img/map.html', 'r') as f:
+    html = f.read()
+components.html(html, width=1200, height=1800)
+
+
 
 
 
